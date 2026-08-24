@@ -8,24 +8,37 @@ def load_resources():
 
 def allocate_resources(triage_list: List[TriageResult]) -> List[ResourceAllocation]:
     resources = load_resources()
-    # Track remaining capacity per resource instead of a boolean status
     for r in resources:
         r["remaining"] = r.get("capacity", 1)
 
     allocations = []
-
     priority_order = {"P1_CRITICAL": 0, "P2_URGENT": 1, "P3_INFO": 2}
+    
+    # Sort strictly by priority level (P1 -> P2 -> P3)
     sorted_triages = sorted(triage_list, key=lambda x: priority_order.get(x.urgency_level, 3))
+
+    category_to_type = {
+        "RESCUE": "Rescue Boat",
+        "MEDICAL": "Ambulance",
+        "RELIEF_SUPPLIES": "Food/Water Kit"
+    }
 
     for item in sorted_triages:
         assigned = None
+        target_type = category_to_type.get(item.category)
 
-        if item.category == "RESCUE":
-            assigned = next((r for r in resources if r["type"] == "Rescue Boat" and r["zone"] == item.zone and r["remaining"] > 0), None)
-        elif item.category == "MEDICAL":
-            assigned = next((r for r in resources if r["type"] == "Ambulance" and r["remaining"] > 0), None)
-        elif item.category == "RELIEF_SUPPLIES":
-            assigned = next((r for r in resources if r["type"] == "Food/Water Kit" and r["remaining"] > 0), None)
+        if target_type:
+            # 1. Prefer resources within the same zone
+            assigned = next(
+                (r for r in resources if r["type"] == target_type and r.get("zone") == item.zone and r["remaining"] > 0),
+                None
+            )
+            # 2. If ambulances or relief kits run out in-zone, check unzoned/cross-zone supply
+            if not assigned and target_type in ["Ambulance", "Food/Water Kit"]:
+                assigned = next(
+                    (r for r in resources if r["type"] == target_type and r["remaining"] > 0),
+                    None
+                )
 
         if assigned:
             assigned["remaining"] -= 1
@@ -34,7 +47,7 @@ def allocate_resources(triage_list: List[TriageResult]) -> List[ResourceAllocati
                 urgency_level=item.urgency_level,
                 assigned_resource_id=assigned["id"],
                 resource_type=assigned["type"],
-                status="DISPATCHED"
+                status="RECOMMENDED"  # Aligns with UI display
             ))
         else:
             allocations.append(ResourceAllocation(

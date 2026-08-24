@@ -1,16 +1,21 @@
+import re
 from api.models import CitizenRequest, TriageResult
 from core.llm_classifier import classify_with_gemini
 
-CRITICAL_KEYWORDS = ["trapped", "stuck", "chest", "drowning", "roof", "rising", "infant", "elderly"]
-MEDICAL_KEYWORDS = ["bleeding", "fracture", "heart", "unconscious", "injury", "diabetic", "ambulance"]
-RELIEF_KEYWORDS = ["food", "water", "ration", "kit", "drinking"]
+CRITICAL_KEYWORDS = {"trapped", "stuck", "chest", "drowning", "roof", "rising", "infant", "elderly"}
+MEDICAL_KEYWORDS = {"bleeding", "fracture", "heart", "unconscious", "injury", "diabetic", "ambulance"}
+RELIEF_KEYWORDS = {"food", "water", "ration", "kit", "drinking", "supplies"}
+
+def has_keyword(msg_words: set, keywords: set) -> bool:
+    return bool(msg_words.intersection(keywords))
 
 def triage_request(req: CitizenRequest) -> TriageResult:
-    """Agentic decision logic for urgency scoring and triage categorization."""
-    msg = req.message.lower()
+    """Hybrid triage: deterministic keyword checks with Gemini LLM fallback."""
+    # Tokenize message into clean lowercase words
+    msg_words = set(re.findall(r'\b\w+\b', req.message.lower()))
 
-    # Rule 1: Life-threatening medical emergency
-    if any(word in msg for word in MEDICAL_KEYWORDS):
+    # Rule 1: Medical Emergency
+    if has_keyword(msg_words, MEDICAL_KEYWORDS):
         return TriageResult(
             request_id=req.id,
             citizen_name=req.citizen_name,
@@ -20,8 +25,8 @@ def triage_request(req: CitizenRequest) -> TriageResult:
             reasoning="Identified critical medical injury or acute condition."
         )
 
-    # Rule 2: Water entrapment / rescue
-    if any(word in msg for word in CRITICAL_KEYWORDS):
+    # Rule 2: Entrapment / Immediate Rescue
+    if has_keyword(msg_words, CRITICAL_KEYWORDS):
         return TriageResult(
             request_id=req.id,
             citizen_name=req.citizen_name,
@@ -31,8 +36,8 @@ def triage_request(req: CitizenRequest) -> TriageResult:
             reasoning="Immediate physical danger / flood entrapment detected."
         )
 
-    # Rule 3: Food / Water supplies
-    if any(word in msg for word in RELIEF_KEYWORDS):
+    # Rule 3: Food / Water / Relief Supplies
+    if has_keyword(msg_words, RELIEF_KEYWORDS):
         return TriageResult(
             request_id=req.id,
             citizen_name=req.citizen_name,
@@ -42,5 +47,15 @@ def triage_request(req: CitizenRequest) -> TriageResult:
             reasoning="Relief material required, non-immediate life threat."
         )
 
-    # Fallback: no keyword matched — genuinely ambiguous, hand off to Gemini
-    return classify_with_gemini(req)
+    # Fallback: Ambiguous message handled by LLM with fail-safe error handling
+    try:
+        return classify_with_gemini(req)
+    except Exception:
+        return TriageResult(
+            request_id=req.id,
+            citizen_name=req.citizen_name,
+            zone=req.zone,
+            urgency_level="P3_INFO",
+            category="GENERAL_INQUIRY",
+            reasoning="Auto-triaged to standard queue due to classification timeout."
+        )

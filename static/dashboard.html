@@ -267,7 +267,7 @@
   tr.P3_INFO .pri-tag { background: var(--p3); color: #052015; }
 
   .status-cell { font-weight: 600; font-size: 11.5px; letter-spacing: 0.05em; }
-  .status-DISPATCHED { color: var(--dispatched); }
+  .status-DISPATCHED, .status-RECOMMENDED { color: var(--dispatched); } /* FIXED COLOR */
   .status-QUEUED { color: var(--queued); }
   .status-RESOLVED_AUTO { color: var(--resolved); }
 
@@ -417,6 +417,7 @@ function setLoading(on) {
 
 const STATUS_LABELS = {
   DISPATCHED: 'RECOMMENDED',
+  RECOMMENDED: 'RECOMMENDED', /* FIXED LABEL */
   QUEUED: 'QUEUED — NO MATCH',
   RESOLVED_AUTO: 'AUTO-RESOLVED'
 };
@@ -455,7 +456,8 @@ function render(weather, triageResults, allocations) {
   document.getElementById('tableWrap').classList.add('active');
   document.getElementById('emptyState').style.display = 'none';
 
-  const dispatched = allocations.filter(a => a.status === 'DISPATCHED').length;
+  /* FIXED COUNTER LOGIC */
+  const dispatched = allocations.filter(a => a.status === 'DISPATCHED' || a.status === 'RECOMMENDED').length;
   const queued = allocations.filter(a => a.status === 'QUEUED').length;
   const resolved = allocations.filter(a => a.status === 'RESOLVED_AUTO').length;
 
