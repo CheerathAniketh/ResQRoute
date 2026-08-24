@@ -434,6 +434,10 @@ function render(weather, triageResults, allocations) {
   const tbody = document.getElementById('resultsBody');
   tbody.innerHTML = '';
 
+  // ADD THESE TWO LINES TO SORT P1 -> P2 -> P3 VISUALLY
+  const prioMap = { "P1_CRITICAL": 1, "P2_URGENT": 2, "P3_INFO": 3 };
+  triageResults.sort((a, b) => prioMap[a.urgency_level] - prioMap[b.urgency_level]);
+
   triageResults.forEach(t => {
     const alloc = allocMap[t.request_id] || {};
     const status = alloc.status || '—';
