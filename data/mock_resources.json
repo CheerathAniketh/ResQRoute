@@ -1,0 +1,7 @@
+[
+  {"id": "RES-BOAT-01", "type": "Rescue Boat", "zone": "Zone-A", "capacity": 6, "status": "AVAILABLE"},
+  {"id": "RES-BOAT-02", "type": "Rescue Boat", "zone": "Zone-B", "capacity": 8, "status": "AVAILABLE"},
+  {"id": "RES-AMB-01", "type": "Ambulance", "zone": "Zone-A", "capacity": 2, "status": "AVAILABLE"},
+  {"id": "RES-FOOD-01", "type": "Food/Water Kit", "zone": "Zone-A", "capacity": 50, "status": "AVAILABLE"},
+  {"id": "RES-FOOD-02", "type": "Food/Water Kit", "zone": "Zone-B", "capacity": 50, "status": "AVAILABLE"}
+]

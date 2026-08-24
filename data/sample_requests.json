@@ -1,0 +1,7 @@
+[
+  {"id": "REQ-101", "citizen_name": "Ramesh", "zone": "Zone-A", "message": "Water rising above chest level, 2 elderly people stuck on roof!"},
+  {"id": "REQ-102", "citizen_name": "Priya", "zone": "Zone-A", "message": "Need drinking water and food packets for 4 people."},
+  {"id": "REQ-103", "citizen_name": "Vikram", "zone": "Zone-B", "message": "Severe leg fracture during wall collapse, bleeding heavily."},
+  {"id": "REQ-104", "citizen_name": "Anita", "zone": "Zone-B", "message": "Where is the nearest relief camp in Zone B?"},
+  {"id": "REQ-105", "citizen_name": "Suresh", "zone": "Zone-A", "message": "Trapped on ground floor, water level rapidly rising."}
+]
