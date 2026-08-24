@@ -8,25 +8,27 @@ def load_resources():
 
 def allocate_resources(triage_list: List[TriageResult]) -> List[ResourceAllocation]:
     resources = load_resources()
+    # Track remaining capacity per resource instead of a boolean status
+    for r in resources:
+        r["remaining"] = r.get("capacity", 1)
+
     allocations = []
 
-    # Sort so P1_CRITICAL gets allocated first
     priority_order = {"P1_CRITICAL": 0, "P2_URGENT": 1, "P3_INFO": 2}
     sorted_triages = sorted(triage_list, key=lambda x: priority_order.get(x.urgency_level, 3))
 
     for item in sorted_triages:
         assigned = None
-        
-        # Resource matching logic
+
         if item.category == "RESCUE":
-            assigned = next((r for r in resources if r["type"] == "Rescue Boat" and r["zone"] == item.zone and r["status"] == "AVAILABLE"), None)
+            assigned = next((r for r in resources if r["type"] == "Rescue Boat" and r["zone"] == item.zone and r["remaining"] > 0), None)
         elif item.category == "MEDICAL":
-            assigned = next((r for r in resources if r["type"] == "Ambulance" and r["status"] == "AVAILABLE"), None)
+            assigned = next((r for r in resources if r["type"] == "Ambulance" and r["remaining"] > 0), None)
         elif item.category == "RELIEF_SUPPLIES":
-            assigned = next((r for r in resources if r["type"] == "Food/Water Kit" and r["status"] == "AVAILABLE"), None)
+            assigned = next((r for r in resources if r["type"] == "Food/Water Kit" and r["remaining"] > 0), None)
 
         if assigned:
-            assigned["status"] = "DISPATCHED"
+            assigned["remaining"] -= 1
             allocations.append(ResourceAllocation(
                 request_id=item.request_id,
                 urgency_level=item.urgency_level,

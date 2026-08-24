@@ -1,4 +1,5 @@
 from api.models import CitizenRequest, TriageResult
+from core.llm_classifier import classify_with_gemini
 
 CRITICAL_KEYWORDS = ["trapped", "stuck", "chest", "drowning", "roof", "rising", "infant", "elderly"]
 MEDICAL_KEYWORDS = ["bleeding", "fracture", "heart", "unconscious", "injury", "diabetic", "ambulance"]
@@ -41,12 +42,5 @@ def triage_request(req: CitizenRequest) -> TriageResult:
             reasoning="Relief material required, non-immediate life threat."
         )
 
-    # Fallback: General inquiry
-    return TriageResult(
-        request_id=req.id,
-        citizen_name=req.citizen_name,
-        zone=req.zone,
-        urgency_level="P3_INFO",
-        category="GENERAL_INQUIRY",
-        reasoning="Routine information request or shelter location query."
-    )
+    # Fallback: no keyword matched — genuinely ambiguous, hand off to Gemini
+    return classify_with_gemini(req)
