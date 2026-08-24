@@ -1,0 +1,46 @@
+id,citizen_name,zone,message
+REQ-200,Anand,Zone-A,Is the water safe to drink right now?
+REQ-201,Pooja,Zone-B,"Stranded on rooftop with two kids, water still rising!"
+REQ-202,Lakshmi,Zone-B,"Someone collapsed and is unconscious, need medical help now."
+REQ-203,Deepa,Zone-B,Out of drinking water and food for 3 days now.
+REQ-204,Farhan,Zone-B,Need food packets and clean water for elderly parents.
+REQ-205,Sameer,Zone-B,Need food packets and clean water for elderly parents.
+REQ-206,Imran,Zone-A,"Trapped in car, water level above tires and climbing!"
+REQ-207,Vijay,Zone-A,"Trapped in car, water level above tires and climbing!"
+REQ-208,Sneha,Zone-B,Need food packets and clean water for elderly parents.
+REQ-209,Manoj,Zone-B,"No supplies left, six people in the house need relief kit."
+REQ-210,Kiran,Zone-A,"House collapsed, we are stuck under debris, please send help!"
+REQ-211,Rohit,Zone-A,"Elderly father having chest pain, needs urgent medical help."
+REQ-212,Fatima,Zone-B,"Water rising fast, whole family trapped on the roof!"
+REQ-213,Meena,Zone-A,Running low on baby formula and clean water.
+REQ-214,Divya,Zone-A,"Need blankets and food, house is flooded but we are safe."
+REQ-215,Ritu,Zone-A,"House collapsed, we are stuck under debris, please send help!"
+REQ-216,Rahul,Zone-B,"Severe injury from falling debris, bleeding heavily."
+REQ-217,Nisha,Zone-B,"Stranded on rooftop with two kids, water still rising!"
+REQ-218,Arjun,Zone-B,"Deep cut from broken glass, won't stop bleeding."
+REQ-219,Kavya,Zone-A,Running low on baby formula and clean water.
+REQ-220,Imran,Zone-A,"House collapsed, we are stuck under debris, please send help!"
+REQ-221,Nisha,Zone-A,"No supplies left, six people in the house need relief kit."
+REQ-222,Imran,Zone-A,"Flood water entering ground floor rapidly, need boat immediately!"
+REQ-223,Anand,Zone-A,"No supplies left, six people in the house need relief kit."
+REQ-224,Lakshmi,Zone-B,"House collapsed, we are stuck under debris, please send help!"
+REQ-225,Sneha,Zone-B,Just confirming our address is on the rescue list.
+REQ-226,Manoj,Zone-A,"House collapsed, we are stuck under debris, please send help!"
+REQ-227,Anand,Zone-B,"Water rising fast, whole family trapped on the roof!"
+REQ-228,Arjun,Zone-A,"Need blankets and food, house is flooded but we are safe."
+REQ-229,Manoj,Zone-A,"Trapped in car, water level above tires and climbing!"
+REQ-230,Rahul,Zone-A,"Water rising fast, whole family trapped on the roof!"
+REQ-231,Sameer,Zone-B,"Water rising fast, whole family trapped on the roof!"
+REQ-232,Divya,Zone-A,"Stranded on rooftop with two kids, water still rising!"
+REQ-233,Rohit,Zone-A,Running low on baby formula and clean water.
+REQ-234,Sameer,Zone-B,"Deep cut from broken glass, won't stop bleeding."
+REQ-235,Imran,Zone-A,Is the water safe to drink right now?
+REQ-236,Manoj,Zone-B,"Trapped in car, water level above tires and climbing!"
+REQ-237,Farhan,Zone-A,"Need blankets and food, house is flooded but we are safe."
+REQ-238,Manoj,Zone-B,"Deep cut from broken glass, won't stop bleeding."
+REQ-239,Farhan,Zone-A,"Elderly father having chest pain, needs urgent medical help."
+REQ-240,Rahul,Zone-B,"No supplies left, six people in the house need relief kit."
+REQ-241,Nisha,Zone-A,Running low on baby formula and clean water.
+REQ-242,Fatima,Zone-B,When will power be restored in our area?
+REQ-243,Arjun,Zone-B,"House collapsed, we are stuck under debris, please send help!"
+REQ-244,Kiran,Zone-B,"House collapsed, we are stuck under debris, please send help!"

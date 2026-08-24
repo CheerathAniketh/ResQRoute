@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ResQRoute — Disaster Resource Allocation</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0f1419; color: #e6e6e6; margin: 0; padding: 30px; }
+  h1 { color: #ff6b6b; }
+  .subtitle { color: #9aa5b1; margin-bottom: 20px; }
+  .controls { margin-bottom: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  button, input[type=file] { padding: 10px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; }
+  button { background: #ff6b6b; color: white; font-weight: 600; }
+  button:hover { background: #ff8787; }
+  #weather { margin-bottom: 20px; padding: 12px 16px; border-radius: 8px; background: #1a2332; border-left: 4px solid #ffa94d; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #2a3441; }
+  th { background: #1a2332; color: #9aa5b1; text-transform: uppercase; font-size: 12px; }
+  tr.P1_CRITICAL { background: rgba(255, 82, 82, 0.15); }
+  tr.P2_URGENT { background: rgba(255, 169, 77, 0.12); }
+  tr.P3_INFO { background: rgba(105, 219, 124, 0.08); }
+  .badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+  .P1_CRITICAL .badge { background: #ff5252; color: white; }
+  .P2_URGENT .badge { background: #ffa94d; color: #1a1a1a; }
+  .P3_INFO .badge { background: #69db7c; color: #1a1a1a; }
+  .status-dispatched { color: #69db7c; font-weight: 600; }
+  .status-queued { color: #ffa94d; font-weight: 600; }
+  .status-resolved { color: #9aa5b1; font-weight: 600; }
+  #summary { margin-top: 16px; color: #9aa5b1; font-size: 14px; }
+  #loading { display: none; color: #ffa94d; margin-left: 10px; }
+</style>
+</head>
+<body>
+  <h1>🚨 ResQRoute</h1>
+  <div class="subtitle">Real-time disaster request triage &amp; resource dispatch — Team Akaza</div>
+
+  <div class="controls">
+    <button onclick="runDemo()">▶ Run Live Demo</button>
+    <label style="color:#9aa5b1;">or upload requests CSV:</label>
+    <input type="file" id="csvFile" accept=".csv">
+    <button onclick="uploadCsv()">Upload &amp; Allocate</button>
+    <span id="loading">Processing…</span>
+  </div>
+
+  <div id="weather"></div>
+  <table id="resultsTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>Priority</th>
+        <th>Requester</th>
+        <th>Zone</th>
+        <th>Category</th>
+        <th>Reasoning</th>
+        <th>Resource Assigned</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="resultsBody"></tbody>
+  </table>
+  <div id="summary"></div>
+
+<script>
+async function runDemo() {
+  setLoading(true);
+  const res = await fetch('/api/demo-run');
+  const data = await res.json();
+  render(data.weather_state, data.triage_results, data.resource_allocation);
+  setLoading(false);
+}
+
+async function uploadCsv() {
+  const fileInput = document.getElementById('csvFile');
+  if (!fileInput.files.length) { alert('Choose a CSV file first'); return; }
+  setLoading(true);
+  const formData = new FormData();
+  formData.append('file', fileInput.files[0]);
+  const res = await fetch('/api/upload-requests-csv', { method: 'POST', body: formData });
+  const data = await res.json();
+  render(data.weather_state, data.triage_results, data.resource_allocation);
+  setLoading(false);
+}
+
+function setLoading(on) {
+  document.getElementById('loading').style.display = on ? 'inline' : 'none';
+}
+
+function render(weather, triageResults, allocations) {
+  const weatherDiv = document.getElementById('weather');
+  weatherDiv.innerHTML = `⛈ <b>${weather.city || 'Hyderabad'}</b> — Rainfall: ${weather.rainfall_mm ?? weather.rainfall ?? '—'} mm/h — Risk: <b>${weather.risk_level ?? weather.risk ?? '—'}</b>`;
+
+  const allocMap = {};
+  allocations.forEach(a => allocMap[a.request_id] = a);
+
+  const tbody = document.getElementById('resultsBody');
+  tbody.innerHTML = '';
+
+  triageResults.forEach(t => {
+    const alloc = allocMap[t.request_id] || {};
+    const statusClass = alloc.status === 'DISPATCHED' ? 'status-dispatched'
+                       : alloc.status === 'QUEUED' ? 'status-queued'
+                       : 'status-resolved';
+    const row = document.createElement('tr');
+    row.className = t.urgency_level;
+    row.innerHTML = `
+      <td class="${t.urgency_level}"><span class="badge">${t.urgency_level.replace('_', ' ')}</span></td>
+      <td>${t.citizen_name}</td>
+      <td>${t.zone}</td>
+      <td>${t.category}</td>
+      <td>${t.reasoning}</td>
+      <td>${alloc.resource_type ? alloc.resource_type + ' (' + alloc.assigned_resource_id + ')' : '—'}</td>
+      <td class="${statusClass}">${alloc.status || '—'}</td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  document.getElementById('resultsTable').style.display = 'table';
+  document.getElementById('summary').innerText =
+    `${triageResults.length} requests processed — ` +
+    `${allocations.filter(a => a.status === 'DISPATCHED').length} dispatched, ` +
+    `${allocations.filter(a => a.status === 'QUEUED').length} queued, ` +
+    `${allocations.filter(a => a.status === 'RESOLVED_AUTO').length} auto-resolved.`;
+}
+</script>
+</body>
+</html>
