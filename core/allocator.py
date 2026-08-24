@@ -15,7 +15,7 @@ def allocate_resources(triage_list: List[TriageResult]) -> List[ResourceAllocati
     priority_order = {"P1_CRITICAL": 0, "P2_URGENT": 1, "P3_INFO": 2}
     
     # Sort strictly by priority level (P1 -> P2 -> P3)
-    sorted_triages = sorted(triage_list, key=lambda x: priority_order.get(x.urgency_level, 3))
+    sorted_triages = sorted(triage_list, key=lambda x: (priority_order.get(x.urgency_level, 3), x.request_id))
 
     category_to_type = {
         "RESCUE": "Rescue Boat",
