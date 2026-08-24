@@ -223,4 +223,20 @@ actual hard part — sharp and demonstrable within an ideathon timeline.
 
 ---
 
+## ⚠️ A Note on Scope: Recommendation, Not Action
+
+ResQRoute is a **decision-support tool**, not an autonomous dispatch system.
+
+It **suggests** which resource should go to which request, ranked by urgency — it does **not** dispatch, deploy, or take any real-world action on its own. Every recommendation is surfaced to a human operator (the government official managing the response), who reviews it and makes the final call to actually send the resource.
+
+This matters for a few reasons:
+
+- **Accountability stays human.** In a life-and-death allocation decision, the person making the call — not the algorithm — should be the one accountable for it.
+- **The system can be wrong, and that's fine.** Rule-based triage on free-text messages is a heuristic, not ground truth. An operator with local context (a request that reads P2 but is actually more urgent, a resource that's technically "available" but out of fuel) can and should override it.
+- **"DISPATCHED" in the code is an internal label, not a real-world event.** It marks that ResQRoute found a matching, available resource for a request — not that anything was actually sent. The dashboard displays this to the operator as **"RECOMMENDED."**
+
+In short: ResQRoute tells you what *it thinks* should happen next, as fast and as consistently as possible under load. Whether it *does* happen is always a human decision.
+
+---
+
 **Team Akaza**
